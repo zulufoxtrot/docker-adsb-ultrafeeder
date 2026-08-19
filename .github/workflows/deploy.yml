@@ -14,11 +14,7 @@ on:
         default: false
 
 # Set workflow-wide environment variables
-#  - REPO: repo name on dockerhub
-#  - IMAGE: image name on dockerhub
 env:
-  #  DOCKERHUB_REPO: sdr-enthusiasts
-  #  DOCKERHUB_IMAGE: vrs
   GHCR_IMAGE: sdr-enthusiasts/docker-adsb-ultrafeeder
   GHCR_REGISTRY: ghcr.io
   GH_LABEL: main
@@ -44,6 +40,11 @@ jobs:
 
   deploy:
     name: Deploy without telegraf
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@4cf063e5906338b3b92f0fe71d8dbae52c180d99 # main
     with:
       push_enabled: true
@@ -54,11 +55,17 @@ jobs:
       build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == ''  }}
       build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
       build_baseimage_url: docker-tar1090:latest/docker-tar1090:baseimage-test
+      docker_latest_tag: dev
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy_with_telegraf:
     name: Deploy with telegraf and healthcheck
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@4cf063e5906338b3b92f0fe71d8dbae52c180d99 # main
     with:
       push_enabled: true

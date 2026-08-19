@@ -15,6 +15,10 @@ SHELL ["/bin/bash", "-x", "-o", "pipefail", "-c"]
 
 # hadolint ignore=DL3008,SC2086,DL4006,SC2039
 RUN \
+  apt-get update -q -y && \
+  apt-get install -o Dpkg::Options::="--force-confnew" -y --no-install-recommends -q \
+  librtlsdr-dev \
+  && \
   # custom readsb (zulufoxtrot fork, adds local-aircraft.json + ICAO suppress filter)
   git clone \
   --branch "dev" \
