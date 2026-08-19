@@ -24,10 +24,6 @@ env:
   GH_LABEL: main
   GHCR_TAG: latest
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   workflow-dispatch:
     name: Triggered via Workflow Dispatch?
@@ -58,7 +54,6 @@ jobs:
       build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == ''  }}
       build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
       build_baseimage_url: docker-tar1090:latest/docker-tar1090:baseimage-test
-      docker_latest_tag: dev
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
 
