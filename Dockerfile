@@ -20,6 +20,7 @@ RUN \
   librtlsdr-dev \
   && \
   # custom readsb (zulufoxtrot fork, adds local-aircraft.json + ICAO suppress filter)
+  # pinned to a specific commit so layer cache is busted on every fork update
   git clone \
   --branch "dev" \
   --depth 1 \
@@ -28,6 +29,7 @@ RUN \
   '/src/readsb' \
   && \
   pushd /src/readsb && \
+  git checkout b71be29 && \
   make \
   RTLSDR=yes \
   AIRCRAFT_HASH_BITS=14 \
