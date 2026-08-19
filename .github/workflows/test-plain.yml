@@ -1,0 +1,10 @@
+name: Test Plain
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "hello from fork"
