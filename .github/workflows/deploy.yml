@@ -24,6 +24,10 @@ env:
   GH_LABEL: main
   GHCR_TAG: latest
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   workflow-dispatch:
     name: Triggered via Workflow Dispatch?
@@ -54,6 +58,7 @@ jobs:
       build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == ''  }}
       build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
       build_baseimage_url: docker-tar1090:latest/docker-tar1090:baseimage-test
+      docker_latest_tag: dev
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -69,7 +74,7 @@ jobs:
       build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == ''  }}
       build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
       build_baseimage_url: docker-tar1090:telegraf/docker-tar1090:telegraf-baseimage-test
-      docker_latest_tag: telegraf
+      docker_latest_tag: dev-telegraf
       dockerfile_changes: |
         docker-tar1090:latest/docker-tar1090:telegraf
 

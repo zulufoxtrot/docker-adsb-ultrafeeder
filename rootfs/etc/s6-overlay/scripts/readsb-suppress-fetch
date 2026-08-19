@@ -1,0 +1,53 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash disable=SC2015,SC2016,SC1091,SC2001,SC2154
+#
+# Coverage-based deduplication support:
+# Poll the local-aircraft.json of the central feeder and write the list of
+# aircraft ICAO addresses it already receives (own SDR) to a file that
+# readsb uses to drop those aircraft from its beast_reduce output.
+#
+# Fail-open: any fetch/parse error results in an empty file, so readsb
+# forwards everything and coverage of the network is never at risk.
+
+source /scripts/common
+source /scripts/interpret_ultrafeeder_config
+
+if [[ -z "$READSB_NET_BEAST_REDUCE_FILTER_ICAO_URL" ]]; then
+    "${s6wrap[@]}" echo "No ICAO suppress URL configured - suppress-fetch service not started"
+    stop_service
+fi
+
+FILTER_FILE="${READSB_NET_BEAST_REDUCE_FILTER_ICAO_FILE:-/run/readsb/suppress-icao.txt}"
+INTERVAL="${READSB_NET_BEAST_REDUCE_FILTER_ICAO_INTERVAL:-10}"
+TMP_FILE="${FILTER_FILE}.tmp"
+
+mkdir -p "$(dirname "$FILTER_FILE")"
+
+"${s6wrap[@]}" echo "ICAO suppress enabled: fetching ${READSB_NET_BEAST_REDUCE_FILTER_ICAO_URL} every ${INTERVAL}s -> ${FILTER_FILE}"
+
+while true; do
+    if data="$(curl -fsSL --max-time 20 --connect-timeout 5 "$READSB_NET_BEAST_REDUCE_FILTER_ICAO_URL" 2>/dev/null)"; then
+        # parse json: {"aircraft":[{"hex":"AABBCC",...},...]}, print hexes uppercase
+        python3 -c '
+import json, sys
+try:
+    payload = json.load(sys.stdin)
+    for ac in payload.get("aircraft", []):
+        h = ac.get("hex")
+        if h:
+            print(h.upper())
+except Exception:
+    sys.exit(0)  # unparseable -> empty output (fail-open)
+' <<< "$data" > "$TMP_FILE" 2>/dev/null
+        if [[ -s "$TMP_FILE" ]]; then
+            sort -u "$TMP_FILE" -o "$TMP_FILE"
+        fi
+        mv -f "$TMP_FILE" "$FILTER_FILE"
+        "${s6wrap[@]}" echo "Updated suppress list: $(wc -l < "$FILTER_FILE") aircraft"
+    else
+        # fail-open: write empty file so nothing is filtered
+        : > "$FILTER_FILE"
+        "${s6wrap[@]}" echo "WARNING: failed to fetch ${READSB_NET_BEAST_REDUCE_FILTER_ICAO_URL} - suppress list cleared (fail-open)"
+    fi
+    sleep "$INTERVAL"
+done

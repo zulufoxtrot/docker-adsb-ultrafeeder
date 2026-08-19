@@ -219,6 +219,20 @@ if [[ -n "$READSB_NET_BEAST_REDUCE_FILTER_ALT" ]]; then
     READSB_CMD+=("--net-beast-reduce-filter-alt=$READSB_NET_BEAST_REDUCE_FILTER_ALT")
 fi
 
+# Handle "--net-beast-reduce-filter-icao-file=<path>" (coverage-based dedup)
+if [[ -n "$READSB_NET_BEAST_REDUCE_FILTER_ICAO_FILE" ]]; then
+    READSB_CMD+=("--net-beast-reduce-filter-icao-file=$READSB_NET_BEAST_REDUCE_FILTER_ICAO_FILE")
+    READSB_CMD+=("--net-beast-reduce-filter-icao-interval=${READSB_NET_BEAST_REDUCE_FILTER_ICAO_INTERVAL:-10}")
+fi
+
+# Handle "--write-local-json" (own-receiver-only aircraft list for dedup)
+if chk_enabled "$READSB_WRITE_LOCAL_JSON"; then
+    READSB_CMD+=("--write-local-json=/run/readsb")
+    if [[ -n "$READSB_WRITE_LOCAL_JSON_WINDOW" ]]; then
+        READSB_CMD+=("--write-local-json-window=$READSB_WRITE_LOCAL_JSON_WINDOW")
+    fi
+fi
+
 # Handle "--net-buffer=<n>"
 if [[ -n "$READSB_NET_BUFFER" ]]; then
     READSB_CMD+=("--net-buffer=$READSB_NET_BUFFER")
