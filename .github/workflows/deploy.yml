@@ -55,7 +55,7 @@ jobs:
       build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == ''  }}
       build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
       build_baseimage_url: docker-tar1090:latest/docker-tar1090:baseimage-test
-      docker_latest_tag: dev
+      docker_latest_tag: latest
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -76,7 +76,7 @@ jobs:
       build_latest: ${{ github.event.inputs.use_test_image == 'false' || github.event.inputs.use_test_image == ''  }}
       build_baseimage_test: ${{ github.event.inputs.use_test_image == 'true' }}
       build_baseimage_url: docker-tar1090:telegraf/docker-tar1090:telegraf-baseimage-test
-      docker_latest_tag: dev-telegraf
+      docker_latest_tag: latest-telegraf
       dockerfile_changes: |
         docker-tar1090:latest/docker-tar1090:telegraf
 
