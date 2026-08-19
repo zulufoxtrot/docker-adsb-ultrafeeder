@@ -29,7 +29,7 @@ RUN \
   '/src/readsb' \
   && \
   pushd /src/readsb && \
-  git checkout b71be29 && \
+  git checkout f3fd91b && \
   make \
   RTLSDR=yes \
   AIRCRAFT_HASH_BITS=14 \
