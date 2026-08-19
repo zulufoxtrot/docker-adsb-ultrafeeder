@@ -6,6 +6,11 @@ on:
 jobs:
   reusefail:
     name: Test reusable call
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@4cf063e5906338b3b92f0fe71d8dbae52c180d99
     with:
       push_enabled: false
