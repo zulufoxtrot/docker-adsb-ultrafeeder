@@ -4,11 +4,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  localjob:
-    runs-on: ubuntu-24.04
-    steps:
-      - run: echo "local job runs"
-
   reusefail:
     name: Test reusable call
     uses: sdr-enthusiasts/common-github-workflows/.github/workflows/sdre.yml@4cf063e5906338b3b92f0fe71d8dbae52c180d99
@@ -17,5 +12,8 @@ jobs:
       ghcr_repo_owner: zulufoxtrot
       ghcr_repo: zulufoxtrot/docker-adsb-ultrafeeder
       docker_build_file: Dockerfile
+      platform_linux_arm32v7_enabled: false
+      platform_linux_arm64v8_enabled: false
+      verify_s6_enabled: false
     secrets:
       ghcr_token: ${{ secrets.GITHUB_TOKEN }}
